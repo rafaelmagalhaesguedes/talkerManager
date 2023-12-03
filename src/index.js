@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 app.use(express.json());
@@ -41,6 +42,13 @@ app.get('/talker/:id', async (request, response) => {
     console.error(`Error: ${error}`);
     return response.status(HTTP_OK_STATUS).json([]);
   }
+});
+
+// POST /login endpoint
+app.post('/login', (request, response) => {
+  const { email, password } = request.body;
+  const token = crypto.randomBytes(8).toString('hex');
+  return response.status(HTTP_OK_STATUS).json({ token });
 });
 
 app.listen(PORT, () => {
