@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
-const validation = require('../middlewares/talker/validation');
+const validation = require('../middlewares/talker/talkerValidation');
 const readTalkerFile = require('../middlewares/talker/readTalker');
 
 const router = express.Router();
