@@ -1,8 +1,9 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
-const validation = require('../middlewares/talker/talkerValidation');
-const readTalkerFile = require('../middlewares/talker/readTalker');
+const validation = require('../middlewares/talker/validation');
+const filter = require('../middlewares/talker/filters');
+const readTalkerFile = require('../middlewares/talker/reader');
 
 const router = express.Router();
 router.use(express.json());
@@ -11,6 +12,21 @@ router.use(express.json());
 router.get('/talker', readTalkerFile, (req, resp) => {
   resp.status(200).json(req.talkers);
 });
+
+// Search by Name, Rate and Date
+router.get('/talker/search',
+  validation.validateToken,
+  readTalkerFile,
+  (req, res) => {
+    const { q, rate, date } = req.query;
+
+    validation.validateFilterRate(rate, res);
+    validation.validateFilterDate(date, res);
+
+    const filteredTalkers = filter.filterTalkers(req.talkers, q, rate, date);
+
+    return res.status(200).json(filteredTalkers);
+  });
 
 // Search by Rate
 router.get('/talker/search',
@@ -24,8 +40,8 @@ router.get('/talker/search',
         .json({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
     }
 
-    let filteredTalkers = validation.filterByRate(req.talkers, rate);
-    filteredTalkers = validation.filterBySearchTerm(filteredTalkers, q);
+    let filteredTalkers = filter.filterByRate(req.talkers, rate);
+    filteredTalkers = filter.filterBySearchTerm(filteredTalkers, q);
 
     return res.status(200).json(filteredTalkers);
   });
