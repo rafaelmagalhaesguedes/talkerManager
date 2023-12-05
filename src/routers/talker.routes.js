@@ -7,10 +7,12 @@ const readTalkerFile = require('../middlewares/talker/readTalker');
 const router = express.Router();
 router.use(express.json());
 
+// Read
 router.get('/talker', readTalkerFile, (req, resp) => {
   resp.status(200).json(req.talkers);
 });
 
+// Read by ID
 router.get('/talker/:id', readTalkerFile, (req, resp) => {
   const { id } = req.params;
   const talker = req.talkers.find((element) => element.id === Number(id));
@@ -20,6 +22,7 @@ router.get('/talker/:id', readTalkerFile, (req, resp) => {
   return resp.status(200).json(talker);
 });
 
+// Create
 router.post('/talker',
   readTalkerFile,
   validation.validateToken,
@@ -35,6 +38,36 @@ router.post('/talker',
       req.talkers.push(newTalker);
       await fs.writeFile(path.resolve(__dirname, '../talker.json'), JSON.stringify(req.talkers));
       return res.status(201).json(newTalker);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+// Update
+router.put('/talker/:id',
+  readTalkerFile,
+  validation.validateToken,
+  validation.validateName,
+  validation.validateAge,
+  validation.validateTalkExistence,
+  validation.validateWatchedAt,
+  validation.validateRate,
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { name, age, talk } = req.body;
+      const data = await fs.readFile(path.resolve(__dirname, '../talker.json'), 'utf-8');
+      const talkers = JSON.parse(data);
+      const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
+
+      if (talkerIndex === -1) {
+        return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+      }
+
+      const updatedTalker = { id: Number(id), name, age, talk };
+      talkers[talkerIndex] = updatedTalker;
+      await fs.writeFile(path.resolve(__dirname, '../talker.json'), JSON.stringify(talkers));
+      return res.status(200).json(updatedTalker);
     } catch (error) {
       next(error);
     }
