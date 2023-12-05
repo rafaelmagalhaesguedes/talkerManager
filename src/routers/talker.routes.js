@@ -7,12 +7,30 @@ const readTalkerFile = require('../middlewares/talker/readTalker');
 const router = express.Router();
 router.use(express.json());
 
-// Read
+// Read only
 router.get('/talker', readTalkerFile, (req, resp) => {
   resp.status(200).json(req.talkers);
 });
 
-// Search
+// Search by Rate
+router.get('/talker/search',
+  validation.validateToken,
+  readTalkerFile,
+  (req, res) => {
+    const { q, rate } = req.query;
+
+    if (rate && (!Number.isInteger(Number(rate)) || rate < 1 || rate > 5)) {
+      return res.status(400)
+        .json({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
+    }
+
+    let filteredTalkers = validation.filterByRate(req.talkers, rate);
+    filteredTalkers = validation.filterBySearchTerm(filteredTalkers, q);
+
+    return res.status(200).json(filteredTalkers);
+  });
+
+// Search by Name
 router.get('/talker/search',
   validation.validateToken,
   readTalkerFile,
@@ -26,7 +44,7 @@ router.get('/talker/search',
     const filteredTalkers = req.talkers.filter((talker) => talker.name.includes(q));
     return res.status(200).json(filteredTalkers);
   });
-
+  
 // Read by ID
 router.get('/talker/:id', readTalkerFile, (req, resp) => {
   const { id } = req.params;

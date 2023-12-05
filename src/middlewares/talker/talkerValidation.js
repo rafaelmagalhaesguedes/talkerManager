@@ -63,4 +63,14 @@ module.exports = {
     }
     return next();
   },
+
+  filterBySearchTerm(talkers, q) {
+    if (!q || q.trim() === '') return talkers;
+    return talkers.filter((talker) => talker.name.includes(q));
+  },
+
+  filterByRate(talkers, rate) {
+    if (!rate) return talkers;
+    return talkers.filter((talker) => talker.talk.rate === Number(rate));
+  },
 };
