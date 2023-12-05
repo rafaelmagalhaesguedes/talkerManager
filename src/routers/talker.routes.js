@@ -12,6 +12,21 @@ router.get('/talker', readTalkerFile, (req, resp) => {
   resp.status(200).json(req.talkers);
 });
 
+// Search
+router.get('/talker/search',
+  validation.validateToken,
+  readTalkerFile,
+  (req, res) => {
+    const { q } = req.query;
+
+    if (!q || q.trim() === '') {
+      return res.status(200).json(req.talkers);
+    }
+
+    const filteredTalkers = req.talkers.filter((talker) => talker.name.includes(q));
+    return res.status(200).json(filteredTalkers);
+  });
+
 // Read by ID
 router.get('/talker/:id', readTalkerFile, (req, resp) => {
   const { id } = req.params;
