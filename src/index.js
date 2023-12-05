@@ -8,6 +8,7 @@ app.use(routers);
 
 const PORT = process.env.PORT || '3001';
 
+// Dont remove this endpoint, its necessary for the corrector
 app.get('/', (_request, response) => {
   response.status(200).send();
 });
