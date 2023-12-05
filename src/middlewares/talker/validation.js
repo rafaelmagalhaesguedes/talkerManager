@@ -64,13 +64,17 @@ module.exports = {
     return next();
   },
 
-  filterBySearchTerm(talkers, q) {
-    if (!q || q.trim() === '') return talkers;
-    return talkers.filter((talker) => talker.name.includes(q));
+  validateFilterRate(rate, res) {
+    if (rate && (!Number.isInteger(Number(rate)) || rate < 1 || rate > 5)) {
+      return res.status(400)
+        .json({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
+    }
   },
 
-  filterByRate(talkers, rate) {
-    if (!rate) return talkers;
-    return talkers.filter((talker) => talker.talk.rate === Number(rate));
+  validateFilterDate(date, res) {
+    if (date && !/^(\d{2}\/){2}\d{4}$/.test(date)) {
+      return res.status(400)
+        .json({ message: 'O parâmetro "date" deve ter o formato "dd/mm/aaaa"' });
+    }
   },
 };
