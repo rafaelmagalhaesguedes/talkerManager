@@ -1,14 +1,13 @@
 const express = require('express');
 const { talkerController } = require('../controllers');
-const validation = require('../middlewares/validation');
-const readTalkerFile = require('../utils/talker/reader');
+const validation = require('../middlewares/talker.validation');
+const readTalkerFile = require('../services/readTalkerFile');
 
 const router = express.Router();
 router.use(express.json());
 
 // Read All
-router.get('/talker',
-  talkerController.getAllTalkers);
+router.get('/talker', talkerController.getAllTalkers);
 
 // Search by Date
 router.get('/talker/search',
@@ -35,8 +34,8 @@ router.get('/talker/:id',
 
 // Create
 router.post('/talker',
-  readTalkerFile,
   validation.validateToken,
+  readTalkerFile,
   validation.validateName,
   validation.validateAge,
   validation.validateTalkExistence,
@@ -46,8 +45,8 @@ router.post('/talker',
 
 // Update
 router.put('/talker/:id',
-  readTalkerFile,
   validation.validateToken,
+  readTalkerFile,
   validation.validateName,
   validation.validateAge,
   validation.validateTalkExistence,

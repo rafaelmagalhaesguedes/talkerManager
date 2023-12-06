@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
-const validation = require('../middlewares/validation');
-const filter = require('../utils/talker/filters');
+const validation = require('../middlewares/talker.validation');
+const filter = require('../utils/filters');
 
 const readTalkerFile = path.resolve(__dirname, '../talker.json');
 
