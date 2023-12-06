@@ -1,14 +1,11 @@
 const express = require('express');
-const crypto = require('crypto');
+const { getToken } = require('../controllers/login.controller');
 const { validateEmail, validatePassword } = require('../middlewares/login.validation');
 
 const router = express.Router();
 
 router.use(express.json());
 
-router.post('/login', validateEmail, validatePassword, (_req, resp) => {
-  const token = crypto.randomBytes(8).toString('hex');
-  return resp.status(200).json({ token });
-});
+router.post('/login', validateEmail, validatePassword, getToken);
 
 module.exports = router;
