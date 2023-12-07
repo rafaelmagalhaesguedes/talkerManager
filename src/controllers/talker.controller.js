@@ -100,6 +100,26 @@ const updateTalker = async (req, res, next) => {
   }
 };
 
+// Update Rate Talker by ID
+const updateTalkerRate = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { rate } = req.body;
+
+    const data = await fs.readFile(readTalkerFile, 'utf-8');
+    const talkers = JSON.parse(data);
+    const talkerIndex = talkers.findIndex((talker) => talker.id === Number(id));
+
+    if (talkerIndex === -1) throw new Error('Pessoa palestrante não encontrada');
+
+    talkers[talkerIndex].talk.rate = rate;
+    await fs.writeFile(readTalkerFile, JSON.stringify(talkers));
+    return res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Delete Talker
 const deleteTalker = async (req, res, next) => {
   try {
@@ -127,5 +147,6 @@ module.exports = {
   searchById,
   createTalker,
   updateTalker,
+  updateTalkerRate,
   deleteTalker,
 };

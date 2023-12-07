@@ -54,6 +54,13 @@ router.put('/talker/:id',
   validation.validateRate,
   talkerController.updateTalker);
 
+// Update Rate Taker By Id
+router.patch('/talker/rate/:id',
+  validation.validateToken,
+  validation.validateTalkerRate,
+  readTalkerFile,
+  talkerController.updateTalkerRate);
+
 // Delete
 router.delete('/talker/:id',
   validation.validateToken,
