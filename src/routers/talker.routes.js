@@ -2,11 +2,15 @@ const express = require('express');
 const { talkerController } = require('../controllers');
 const validation = require('../middlewares/talker.validation');
 const readTalkerFile = require('../services/readTalkerFile');
+const { findAll } = require('../daos/talker.dao');
 
 const router = express.Router();
 router.use(express.json());
 
-// Read All
+// Read only database
+router.get('/talker/db', findAll);
+
+// Read only file
 router.get('/talker', talkerController.getAllTalkers);
 
 // Search by Date
