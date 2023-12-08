@@ -1,7 +1,6 @@
 const express = require('express');
-const { talkerController } = require('../controllers');
 const validation = require('../middlewares/talker.validation');
-const readTalkerFile = require('../services/readTalkerFile');
+const { talkerController } = require('../controllers');
 const { findAll } = require('../daos/talker.dao');
 
 const router = express.Router();
@@ -16,30 +15,32 @@ router.get('/talker', talkerController.getAllTalkers);
 // Search by Date
 router.get('/talker/search',
   validation.validateToken,
-  readTalkerFile,
+  validation.validateFilterDate,
+  validation.validateFilterRate,
+  validation.validateData,
   talkerController.searchByDate);
 
 // Search by Rate
 router.get('/talker/search',
   validation.validateToken,
-  readTalkerFile,
+  validation.validateData,
   talkerController.searchByRate);
 
 // Search by Name
 router.get('/talker/search',
   validation.validateToken,
-  readTalkerFile,
+  validation.validateData,
   talkerController.searchByName);
   
 // Read by ID
 router.get('/talker/:id',
-  readTalkerFile,
+  validation.validateData,
   talkerController.searchById);
 
 // Create
 router.post('/talker',
   validation.validateToken,
-  readTalkerFile,
+  validation.validateData,
   validation.validateName,
   validation.validateAge,
   validation.validateTalkExistence,
@@ -50,7 +51,7 @@ router.post('/talker',
 // Update
 router.put('/talker/:id',
   validation.validateToken,
-  readTalkerFile,
+  validation.validateData,
   validation.validateName,
   validation.validateAge,
   validation.validateTalkExistence,
@@ -62,13 +63,13 @@ router.put('/talker/:id',
 router.patch('/talker/rate/:id',
   validation.validateToken,
   validation.validateTalkerRate,
-  readTalkerFile,
+  validation.validateData,
   talkerController.updateTalkerRate);
 
 // Delete
 router.delete('/talker/:id',
   validation.validateToken,
-  readTalkerFile,
+  validation.validateData,
   talkerController.deleteTalker);
 
 module.exports = router;
