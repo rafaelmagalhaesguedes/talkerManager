@@ -10,8 +10,8 @@ Clone o repositório para sua máquina local usando:
 
 ## Pré-requisitos
 
-- NodeJS
-- Express
+- Node.js
+- npm
 
 ## Instalação
 
