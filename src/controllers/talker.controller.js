@@ -1,18 +1,9 @@
-const {
-  readTalkers,
-  writeTalkers,
-  updateTalkerById,
-  updateTalkerRateById,
-  filterBySearchTerm,
-  filterByRate,
-  filterTalkers,
-  filterSearchById,
-} = require('../services/talkerData');
+const talkerData = require('../services/talkerData');
 
 // Read only
 const getAllTalkers = async (_req, res) => {
   try {
-    const talkers = await readTalkers();
+    const talkers = await talkerData.readTalkers();
     return res.status(200).json(talkers);
   } catch (error) {
     return res.status(500).json({ message: 'Erro ao ler o arquivo de palestrantes' });
@@ -22,15 +13,15 @@ const getAllTalkers = async (_req, res) => {
 // Search by Date
 const searchByDate = (req, res) => {
   const { q, rate, date } = req.query;
-  const filteredTalkers = filterTalkers(req.talkers, q, rate, date);
+  const filteredTalkers = talkerData.filterTalkers(req.talkers, q, rate, date);
   return res.status(200).json(filteredTalkers);
 };
 
 // Search by Rate
 const searchByRate = (req, res) => {
   const { q, rate } = req.query;
-  let filteredTalkers = filterByRate(req.talkers, rate);
-  filteredTalkers = filterBySearchTerm(filteredTalkers, q);
+  let filteredTalkers = talkerData.filterByRate(req.talkers, rate);
+  filteredTalkers = talkerData.filterBySearchTerm(filteredTalkers, q);
   return res.status(200).json(filteredTalkers);
 };
 
@@ -42,7 +33,7 @@ const searchByName = (req, res) => {
     return res.status(200).json(req.talkers);
   }
   
-  const filteredTalkers = filterBySearchTerm(req.talkers, q);
+  const filteredTalkers = talkerData.filterBySearchTerm(req.talkers, q);
 
   return res.status(200).json(filteredTalkers);
 };
@@ -51,7 +42,7 @@ const searchByName = (req, res) => {
 const searchById = (req, resp) => {
   const { id } = req.params;
 
-  const talker = filterSearchById(req.talkers, id);
+  const talker = talkerData.filterSearchById(req.talkers, id);
   
   if (!talker) {
     return resp.status(404).json({ message: 'Pessoa palestrante não encontrada' });
@@ -68,7 +59,7 @@ const createTalker = async (req, res, next) => {
     const newTalker = { id: req.talkers.length + 1, name, age, talk };
     req.talkers.push(newTalker);
     
-    await writeTalkers(req.talkers);
+    await talkerData.writeTalkers(req.talkers);
     
     return res.status(201).json(newTalker);
   } catch (error) {
@@ -83,7 +74,7 @@ const updateTalker = async (req, res, next) => {
     const { name, age, talk } = req.body;
     const updatedTalker = { id: Number(id), name, age, talk };
 
-    const result = await updateTalkerById(id, updatedTalker);
+    const result = await talkerData.updateTalkerById(id, updatedTalker);
 
     if (!result) {
       return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
@@ -101,7 +92,7 @@ const updateTalkerRate = async (req, res, next) => {
     const { id } = req.params;
     const { rate } = req.body;
 
-    const result = await updateTalkerRateById(id, rate);
+    const result = await talkerData.updateTalkerRateById(id, rate);
 
     if (!result) throw new Error('Pessoa palestrante não encontrada');
 
@@ -122,7 +113,7 @@ const deleteTalker = async (req, res, next) => {
     }
 
     req.talkers.splice(talkerIndex, 1);
-    await writeTalkers(req.talkers);
+    await talkerData.writeTalkers(req.talkers);
 
     return res.status(204).end();
   } catch (error) {
