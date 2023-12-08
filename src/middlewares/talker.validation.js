@@ -1,3 +1,8 @@
+const fs = require('fs').promises;
+const path = require('path');
+
+const readTalkerFile = path.resolve(__dirname, '../talker.json');
+
 module.exports = {
   validateToken(req, res, next) {
     if (!req.headers.authorization) {
@@ -5,6 +10,17 @@ module.exports = {
     }
     if (req.headers.authorization.length !== 16) {
       return res.status(401).json({ message: 'Token inválido' });
+    }
+    return next();
+  },
+
+  async validateData(req, _res, next) {
+    try {
+      const data = await fs.readFile(readTalkerFile, 'utf-8');
+      req.talkers = JSON.parse(data);
+    } catch (error) {
+      console.error(`Error: ${error}`);
+      req.talkers = [];
     }
     return next();
   },
@@ -76,17 +92,22 @@ module.exports = {
     return next();
   },
 
-  validateFilterRate(rate, res) {
+  validateFilterRate(req, res, next) {
+    const { rate } = req.query;
     if (rate && (!Number.isInteger(Number(rate)) || rate < 1 || rate > 5)) {
       return res.status(400)
         .json({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
     }
+    next();
   },
 
-  validateFilterDate(date, res) {
+  validateFilterDate(req, res, next) {
+    const { date } = req.query;
     if (date && !/^(\d{2}\/){2}\d{4}$/.test(date)) {
       return res.status(400)
         .json({ message: 'O parâmetro "date" deve ter o formato "dd/mm/aaaa"' });
     }
+    next();
   },
+  
 };
