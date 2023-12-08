@@ -290,5 +290,7 @@ $RECYCLE.BIN/
 
 # Environment variables
 .env
+.env.example
+docker-compose.yml
 
 # End of https://www.toptal.com/developers/gitignore/api/node,macos,windows,linux,visualstudiocode,intellij

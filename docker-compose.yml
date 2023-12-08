@@ -24,14 +24,6 @@ services:
       # Expõe a porta padrão da aplicação: altere aqui caso use outra porta
       - 3001:3001
       - 9229:9229
-    # Variáveis de ambiente para comunicação com o banco de dados (requisito 12)
-    environment:
-      PORT: 3001
-      MYSQL_HOSTNAME: db
-      MYSQL_PORT: 3306
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: TalkerDB
 
   db:
     container_name: talker_manager_db
